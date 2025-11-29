@@ -1,0 +1,71 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\Apoderado;
+use Illuminate\Http\Request;
+
+class ApoderadoController extends Controller
+{
+    public function index()
+    {
+        $apoderados = Apoderado::with('alumnos')->get();
+        return response()->json($apoderados);
+    }
+
+    public function store(Request $request)
+    {
+        $request->validate([
+            'nombre_completo' => 'required|string',
+            'ci' => 'required|string',
+            'celular' => 'nullable|string',
+            'direccion' => 'nullable|string',
+            'relacion_legal' => 'required|string',
+            'observacion' => 'nullable|string',
+        ]);
+
+        $apoderado = Apoderado::create($request->all());
+        
+        if ($request->has('alumnos')) {
+            $apoderado->alumnos()->sync($request->alumnos);
+        }
+
+        return response()->json($apoderado->load('alumnos'), 201);
+    }
+
+    public function show($id)
+    {
+        $apoderado = Apoderado::with('alumnos')->findOrFail($id);
+        return response()->json($apoderado);
+    }
+
+    public function update(Request $request, $id)
+    {
+        $apoderado = Apoderado::findOrFail($id);
+        
+        $request->validate([
+            'nombre_completo' => 'required|string',
+            'ci' => 'required|string',
+            'celular' => 'nullable|string',
+            'direccion' => 'nullable|string',
+            'relacion_legal' => 'required|string',
+            'observacion' => 'nullable|string',
+        ]);
+
+        $apoderado->update($request->all());
+        
+        if ($request->has('alumnos')) {
+            $apoderado->alumnos()->sync($request->alumnos);
+        }
+
+        return response()->json($apoderado->load('alumnos'));
+    }
+
+    public function destroy($id)
+    {
+        $apoderado = Apoderado::findOrFail($id);
+        $apoderado->delete();
+        return response()->json(null, 204);
+    }
+}
+
