@@ -3,7 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Egreso;
+use App\Models\Proveedor;
+use App\Models\CategoriaEgreso;
+use App\Models\Moneda;
 use App\Services\NumeracionService;
+use App\Services\AsientoService;
 use Illuminate\Http\Request;
 
 class EgresoController extends Controller
@@ -16,13 +20,19 @@ class EgresoController extends Controller
 
     public function create()
     {
-        return view('egresos.create');
+        $proveedores = Proveedor::all();
+        $categorias = CategoriaEgreso::all();
+        $monedas = Moneda::all();
+        return view('egresos.create', compact('proveedores', 'categorias', 'monedas'));
     }
 
     public function edit($id)
     {
         $egreso = Egreso::with(['proveedor', 'categoria', 'moneda'])->findOrFail($id);
-        return view('egresos.edit', compact('egreso'));
+        $proveedores = Proveedor::all();
+        $categorias = CategoriaEgreso::all();
+        $monedas = Moneda::all();
+        return view('egresos.edit', compact('egreso', 'proveedores', 'categorias', 'monedas'));
     }
 
     public function store(Request $request)
@@ -52,7 +62,10 @@ class EgresoController extends Controller
             'serie' => 'EGR',
         ]);
 
-        return redirect()->route('egresos.index')->with('success', 'Egreso registrado exitosamente.');
+        // Crear asiento automático
+        AsientoService::crearAsientoEgreso($egreso);
+
+        return redirect()->route('egresos.index')->with('success', 'Egreso registrado exitosamente con asiento contable generado.');
     }
 
     public function show($id)
@@ -64,6 +77,7 @@ class EgresoController extends Controller
     public function update(Request $request, $id)
     {
         $egreso = Egreso::findOrFail($id);
+        $datosAnteriores = $egreso->toArray();
         
         $request->validate([
             'id_proveedor' => 'nullable|exists:proveedor,id_proveedor',
@@ -76,14 +90,23 @@ class EgresoController extends Controller
         ]);
 
         $egreso->update($request->all());
+        
+        // Actualizar asiento automático
+        AsientoService::actualizarAsientoEgreso($egreso, $datosAnteriores);
+
         return redirect()->route('egresos.index')->with('success', 'Egreso actualizado exitosamente.');
     }
 
     public function destroy($id)
     {
         $egreso = Egreso::findOrFail($id);
+        
+        // Eliminar asiento asociado
+        if ($egreso->id_asiento) {
+            AsientoService::eliminarAsiento($egreso->id_asiento);
+        }
+        
         $egreso->delete();
         return redirect()->route('egresos.index')->with('success', 'Egreso eliminado exitosamente.');
     }
 }
-

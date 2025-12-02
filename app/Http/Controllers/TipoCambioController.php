@@ -32,7 +32,7 @@ class TipoCambioController extends Controller
         ]);
 
         // Validar que la moneda existe
-        $moneda = Moneda::find($id_moneda);
+        $moneda = Moneda::find($id_moneda, ['id_moneda']);
         if (!$moneda) {
             Log::error('Moneda not found', ['id_moneda' => $id_moneda]);
             return back()->withErrors(['error' => 'Moneda no encontrada']);

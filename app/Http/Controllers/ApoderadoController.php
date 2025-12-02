@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Apoderado;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Schema;
 
 class ApoderadoController extends Controller
 {
@@ -29,7 +30,9 @@ class ApoderadoController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'nombre_completo' => 'required|string',
+            'nombres' => 'required|string',
+            'apellido_paterno' => 'nullable|string',
+            'apellido_materno' => 'nullable|string',
             'ci' => 'required|string',
             'celular' => 'nullable|string',
             'direccion' => 'nullable|string',
@@ -37,7 +40,12 @@ class ApoderadoController extends Controller
             'observacion' => 'nullable|string',
         ]);
 
-        $apoderado = Apoderado::create($request->all());
+        $apoderado = Apoderado::create($request->only(['nombres','apellido_paterno','apellido_materno','ci','celular','direccion','relacion_legal','observacion']));
+
+        if (Schema::hasColumn('apoderado', 'nombre_completo')) {
+            $apoderado->nombre_completo = trim(($apoderado->nombres ?? '') . ' ' . ($apoderado->apellido_paterno ?? '') . ' ' . ($apoderado->apellido_materno ?? ''));
+            $apoderado->save();
+        }
         
         if ($request->has('alumnos')) {
             $apoderado->alumnos()->sync($request->alumnos);
@@ -57,7 +65,9 @@ class ApoderadoController extends Controller
         $apoderado = Apoderado::findOrFail($id);
         
         $request->validate([
-            'nombre_completo' => 'required|string',
+            'nombres' => 'required|string',
+            'apellido_paterno' => 'nullable|string',
+            'apellido_materno' => 'nullable|string',
             'ci' => 'required|string',
             'celular' => 'nullable|string',
             'direccion' => 'nullable|string',
@@ -65,7 +75,12 @@ class ApoderadoController extends Controller
             'observacion' => 'nullable|string',
         ]);
 
-        $apoderado->update($request->all());
+        $apoderado->update($request->only(['nombres','apellido_paterno','apellido_materno','ci','celular','direccion','relacion_legal','observacion']));
+
+        if (Schema::hasColumn('apoderado', 'nombre_completo')) {
+            $apoderado->nombre_completo = trim(($apoderado->nombres ?? '') . ' ' . ($apoderado->apellido_paterno ?? '') . ' ' . ($apoderado->apellido_materno ?? ''));
+            $apoderado->save();
+        }
         
         if ($request->has('alumnos')) {
             $apoderado->alumnos()->sync($request->alumnos);

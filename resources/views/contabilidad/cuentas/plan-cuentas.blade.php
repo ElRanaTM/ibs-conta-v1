@@ -14,12 +14,15 @@
         <button onclick="document.getElementById('modal-crear-cuenta').classList.remove('hidden')" class="px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors">
             <i class="fas fa-plus mr-2"></i>Crear Cuenta
         </button>
-        <button class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors">
+        <a href="{{ route('cuentas.plan-cuentas.manage') }}" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors">
+            <i class="fas fa-exclamation-triangle mr-2"></i>Gestión (Editar/Borrar)
+        </a>
+        <a href="{{ route('cuentas.plan-cuentas') }}" class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors">
             <i class="fas fa-file-pdf mr-2"></i>Exportar PDF
-        </button>
-        <button class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors">
+        </a>
+        <a href="{{ route('cuentas.plan-cuentas') }}" class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors">
             <i class="fas fa-file-excel mr-2"></i>Exportar Excel
-        </button>
+        </a>
     </div>
 </div>
 @endsection

@@ -3,8 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Models\Pago;
+use App\Models\Alumno;
+use App\Models\ConceptoIngreso;
+use App\Models\PeriodoAcademico;
+use App\Models\Moneda;
+use App\Models\MetodoPago;
 use App\Models\NumeracionDocumentos;
 use App\Services\NumeracionService;
+use App\Services\AsientoService;
 use Illuminate\Http\Request;
 
 class PagoController extends Controller
@@ -17,13 +23,23 @@ class PagoController extends Controller
 
     public function create()
     {
-        return view('ingresos.pagos.create');
+        $alumnos = Alumno::all();
+        $conceptos = ConceptoIngreso::all();
+        $periodos = PeriodoAcademico::all();
+        $monedas = Moneda::all();
+        $metodos = MetodoPago::all();
+        return view('ingresos.pagos.create', compact('alumnos', 'conceptos', 'periodos', 'monedas', 'metodos'));
     }
 
     public function edit($id)
     {
         $pago = Pago::with(['alumno', 'concepto', 'periodo', 'moneda', 'metodoPago'])->findOrFail($id);
-        return view('ingresos.pagos.edit', compact('pago'));
+        $alumnos = Alumno::all();
+        $conceptos = ConceptoIngreso::all();
+        $periodos = PeriodoAcademico::all();
+        $monedas = Moneda::all();
+        $metodos = MetodoPago::all();
+        return view('ingresos.pagos.edit', compact('pago', 'alumnos', 'conceptos', 'periodos', 'monedas', 'metodos'));
     }
 
     public function store(Request $request)
@@ -66,7 +82,10 @@ class PagoController extends Controller
             'id_numeracion_documento' => $numeracion->id,
         ]);
 
-        return redirect()->route('pagos.index')->with('success', 'Pago registrado exitosamente.');
+        // Crear asiento automático
+        AsientoService::crearAsientoPago($pago);
+
+        return redirect()->route('pagos.index')->with('success', 'Pago registrado exitosamente con asiento contable generado.');
     }
 
     public function show($id)
@@ -78,6 +97,7 @@ class PagoController extends Controller
     public function update(Request $request, $id)
     {
         $pago = Pago::findOrFail($id);
+        $datosAnteriores = $pago->toArray();
         
         $request->validate([
             'id_alumno' => 'required|exists:alumno,id_alumno',
@@ -93,14 +113,23 @@ class PagoController extends Controller
         ]);
 
         $pago->update($request->all());
+        
+        // Actualizar asiento automático
+        AsientoService::actualizarAsientoPago($pago, $datosAnteriores);
+
         return redirect()->route('pagos.index')->with('success', 'Pago actualizado exitosamente.');
     }
 
     public function destroy($id)
     {
         $pago = Pago::findOrFail($id);
+        
+        // Eliminar asiento asociado
+        if ($pago->id_asiento) {
+            AsientoService::eliminarAsiento($pago->id_asiento);
+        }
+        
         $pago->delete();
         return redirect()->route('pagos.index')->with('success', 'Pago eliminado exitosamente.');
     }
 }
-

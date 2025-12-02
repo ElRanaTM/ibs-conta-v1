@@ -11,12 +11,12 @@
         <p class="text-gray-600 mt-1">Resumen de movimientos contables por cuenta</p>
     </div>
     <div class="flex space-x-3">
-        <button class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors">
+        <a href="{{ route('sumas-saldos.export.print', ['fecha_desde' => $fechaDesde ?? date('Y-m-01'), 'fecha_hasta' => $fechaHasta ?? date('Y-m-d')]) }}" class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors">
             <i class="fas fa-file-pdf mr-2"></i>Exportar PDF
-        </button>
-        <button class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors">
+        </a>
+        <a href="{{ route('sumas-saldos.export.csv', ['fecha_desde' => $fechaDesde ?? date('Y-m-01'), 'fecha_hasta' => $fechaHasta ?? date('Y-m-d')]) }}" class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors">
             <i class="fas fa-file-excel mr-2"></i>Exportar Excel
-        </button>
+        </a>
     </div>
 </div>
 @endsection

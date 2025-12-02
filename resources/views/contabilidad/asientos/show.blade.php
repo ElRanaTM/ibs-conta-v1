@@ -11,10 +11,10 @@
         <p class="text-gray-600 mt-1">Detalle del asiento contable</p>
     </div>
     <div class="flex space-x-3">
-        <a href="{{ route('asientos.edit', $asiento->id) }}" class="px-4 py-2 bg-gray-800 text-white rounded-lg hover:bg-gray-700 transition-colors">
+        <a href="{{ route('contabilidad.asientos.edit', $asiento->id) }}" class="px-4 py-2 bg-gray-800 text-white rounded-lg hover:bg-gray-700 transition-colors">
             <i class="fas fa-edit mr-2"></i>Editar
         </a>
-        <a href="{{ route('asientos.index') }}" class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors">
+        <a href="{{ route('contabilidad.asientos.index') }}" class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors">
             <i class="fas fa-arrow-left mr-2"></i>Volver
         </a>
     </div>

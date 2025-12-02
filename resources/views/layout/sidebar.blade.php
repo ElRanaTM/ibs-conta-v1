@@ -21,13 +21,13 @@
                 <p class="px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Contabilidad</p>
             </li>
             <li>
-                <a href="{{ route('asientos.index') }}" class="flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors {{ request()->routeIs('asientos.index') || request()->routeIs('asientos.create') || request()->routeIs('asientos.show') || request()->routeIs('asientos.edit') ? 'bg-gray-800 text-white' : 'text-gray-300 hover:bg-gray-800 hover:text-white' }}">
+                <a href="{{ route('contabilidad.asientos.index') }}" class="flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors {{ request()->routeIs('asientos.index') || request()->routeIs('asientos.create') || request()->routeIs('asientos.show') || request()->routeIs('asientos.edit') ? 'bg-gray-800 text-white' : 'text-gray-300 hover:bg-gray-800 hover:text-white' }}">
                     <i class="fas fa-file-alt w-5 mr-3"></i>
                     Asientos Contables
                 </a>
             </li>
             <li>
-                <a href="{{ route('asientos.diario') }}" class="flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors {{ request()->routeIs('asientos.diario') ? 'bg-gray-800 text-white' : 'text-gray-300 hover:bg-gray-800 hover:text-white' }}">
+                <a href="{{ route('contabilidad.asientos.diario') }}" class="flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors {{ request()->routeIs('asientos.diario') ? 'bg-gray-800 text-white' : 'text-gray-300 hover:bg-gray-800 hover:text-white' }}">
                     <i class="fas fa-book w-5 mr-3"></i>
                     Libro Diario
                 </a>
@@ -95,10 +95,49 @@
                 <p class="px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Catálogos</p>
             </li>
             <li>
-                <a href="{{ route('catalogos.monedas.index') }}" class="flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors {{ request()->routeIs('catalogos.*') ? 'bg-gray-800 text-white' : 'text-gray-300 hover:bg-gray-800 hover:text-white' }}">
+                <button onclick="toggleCatalogosMenu()" class="w-full flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors text-gray-300 hover:bg-gray-800 hover:text-white">
                     <i class="fas fa-list w-5 mr-3"></i>
                     Catálogos
-                </a>
+                    <i class="fas fa-chevron-down w-4 ml-auto transition-transform" id="catalogos-icon"></i>
+                </button>
+                <ul id="catalogos-menu" class="space-y-1 px-6 mt-2 hidden">
+                    <li>
+                        <a href="{{ route('catalogos.proveedores.index') }}" class="flex items-center px-2 py-2 text-xs font-medium rounded-lg transition-colors {{ request()->routeIs('catalogos.proveedores.*') ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-gray-100' }}">
+                            <i class="fas fa-briefcase w-4 mr-2"></i>
+                            Proveedores
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ route('catalogos.categorias-egreso.index') }}" class="flex items-center px-2 py-2 text-xs font-medium rounded-lg transition-colors {{ request()->routeIs('catalogos.categorias-egreso.*') ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-gray-100' }}">
+                            <i class="fas fa-folder-open w-4 mr-2"></i>
+                            Categorías Egreso
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ route('catalogos.conceptos-ingreso.index') }}" class="flex items-center px-2 py-2 text-xs font-medium rounded-lg transition-colors {{ request()->routeIs('catalogos.conceptos-ingreso.*') ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-gray-100' }}">
+                            <i class="fas fa-file-invoice-dollar w-4 mr-2"></i>
+                            Conceptos Ingreso
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ route('catalogos.periodos-academicos.index') }}" class="flex items-center px-2 py-2 text-xs font-medium rounded-lg transition-colors {{ request()->routeIs('catalogos.periodos-academicos.*') ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-gray-100' }}">
+                            <i class="fas fa-calendar-alt w-4 mr-2"></i>
+                            Períodos Académicos
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ route('catalogos.metodos-pago.index') }}" class="flex items-center px-2 py-2 text-xs font-medium rounded-lg transition-colors {{ request()->routeIs('catalogos.metodos-pago.*') ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-gray-100' }}">
+                            <i class="fas fa-credit-card w-4 mr-2"></i>
+                            Métodos Pago
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ route('catalogos.monedas.index') }}" class="flex items-center px-2 py-2 text-xs font-medium rounded-lg transition-colors {{ request()->routeIs('catalogos.monedas.*') ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-gray-100' }}">
+                            <i class="fas fa-coins w-4 mr-2"></i>
+                            Monedas
+                        </a>
+                    </li>
+                </ul>
             </li>
             
             <!-- Administración -->
@@ -127,3 +166,25 @@
     </div>
 </aside>
 
+<script>
+function toggleCatalogosMenu() {
+    const menu = document.getElementById('catalogos-menu');
+    const icon = document.getElementById('catalogos-icon');
+    
+    menu.classList.toggle('hidden');
+    icon.classList.toggle('rotate-180');
+}
+
+// Verificar si algún elemento del menú de catálogos está activo
+document.addEventListener('DOMContentLoaded', function() {
+    const catalogosLinks = document.querySelectorAll('#catalogos-menu a');
+    const isAnyCatalogActive = Array.from(catalogosLinks).some(link => 
+        link.classList.contains('bg-gray-700')
+    );
+    
+    if (isAnyCatalogActive) {
+        document.getElementById('catalogos-menu').classList.remove('hidden');
+        document.getElementById('catalogos-icon').classList.add('rotate-180');
+    }
+});
+</script>

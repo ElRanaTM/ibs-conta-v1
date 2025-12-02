@@ -10,7 +10,12 @@ class MetodoPagoController extends Controller
     public function index()
     {
         $metodos = MetodoPago::all();
-        return response()->json($metodos);
+        return view('catalogos.metodos_pago.index', compact('metodos'));
+    }
+
+    public function create()
+    {
+        return view('catalogos.metodos_pago.create');
     }
 
     public function store(Request $request)
@@ -20,14 +25,20 @@ class MetodoPagoController extends Controller
             'descripcion' => 'nullable|string',
         ]);
 
-        $metodo = MetodoPago::create($request->all());
-        return response()->json($metodo, 201);
+        MetodoPago::create($request->all());
+        return redirect()->route('catalogos.metodos-pago.index')->with('success', 'Método de pago creado exitosamente.');
     }
 
     public function show($id)
     {
         $metodo = MetodoPago::findOrFail($id);
         return response()->json($metodo);
+    }
+
+    public function edit($id)
+    {
+        $metodo = MetodoPago::findOrFail($id);
+        return view('catalogos.metodos_pago.edit', compact('metodo'));
     }
 
     public function update(Request $request, $id)
@@ -40,14 +51,14 @@ class MetodoPagoController extends Controller
         ]);
 
         $metodo->update($request->all());
-        return response()->json($metodo);
+        return redirect()->route('catalogos.metodos-pago.index')->with('success', 'Método de pago actualizado exitosamente.');
     }
 
     public function destroy($id)
     {
         $metodo = MetodoPago::findOrFail($id);
         $metodo->delete();
-        return response()->json(null, 204);
+        return redirect()->route('catalogos.metodos-pago.index')->with('success', 'Método de pago eliminado exitosamente.');
     }
 }
 

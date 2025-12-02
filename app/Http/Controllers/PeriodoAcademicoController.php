@@ -10,7 +10,12 @@ class PeriodoAcademicoController extends Controller
     public function index()
     {
         $periodos = PeriodoAcademico::all();
-        return response()->json($periodos);
+        return view('catalogos.periodos_academicos.index', compact('periodos'));
+    }
+
+    public function create()
+    {
+        return view('catalogos.periodos_academicos.create');
     }
 
     public function store(Request $request)
@@ -22,14 +27,20 @@ class PeriodoAcademicoController extends Controller
             'activo' => 'boolean',
         ]);
 
-        $periodo = PeriodoAcademico::create($request->all());
-        return response()->json($periodo, 201);
+        PeriodoAcademico::create($request->all());
+        return redirect()->route('catalogos.periodos-academicos.index')->with('success', 'Período académico creado exitosamente.');
     }
 
     public function show($id)
     {
         $periodo = PeriodoAcademico::findOrFail($id);
         return response()->json($periodo);
+    }
+
+    public function edit($id)
+    {
+        $periodo = PeriodoAcademico::findOrFail($id);
+        return view('catalogos.periodos_academicos.edit', compact('periodo'));
     }
 
     public function update(Request $request, $id)
@@ -44,14 +55,14 @@ class PeriodoAcademicoController extends Controller
         ]);
 
         $periodo->update($request->all());
-        return response()->json($periodo);
+        return redirect()->route('catalogos.periodos-academicos.index')->with('success', 'Período académico actualizado exitosamente.');
     }
 
     public function destroy($id)
     {
         $periodo = PeriodoAcademico::findOrFail($id);
         $periodo->delete();
-        return response()->json(null, 204);
+        return redirect()->route('catalogos.periodos-academicos.index')->with('success', 'Período académico eliminado exitosamente.');
     }
 }
 

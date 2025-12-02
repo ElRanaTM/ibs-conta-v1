@@ -14,7 +14,7 @@
 @section('content')
 <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
     <div class="lg:col-span-3">
-        <form action="{{ route('asientos.store') }}" method="POST" class="space-y-6">
+        <form action="{{ route('contabilidad.asientos.store') }}" method="POST" class="space-y-6">
             @csrf
             
             <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
@@ -73,7 +73,7 @@
             </div>
             
             <div class="flex justify-end space-x-4">
-                <a href="{{ route('asientos.index') }}" class="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors">
+                <a href="{{ route('contabilidad.asientos.index') }}" class="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors">
                     Cancelar
                 </a>
                 <button type="submit" class="px-6 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors">
@@ -320,6 +320,76 @@ cargarTiposCambio();
 
 // Agregar primera fila al cargar
 addDetailRow();
+
+
+//testing
+// En create.blade.php, dentro del script, modifica el submit del formulario:
+document.querySelector('form').addEventListener('submit', function(e) {
+    console.log('=== FORM SUBMIT INICIADO ===');
+    console.log('Form data antes de validar:');
+    
+    // Mostrar todos los datos del formulario
+    const formData = new FormData(this);
+    for (let [key, value] of formData.entries()) {
+        console.log(`${key}: ${value}`);
+    }
+    
+    // Validar que cada fila tenga al menos Debe o Haber mayor a 0
+    let isValid = true;
+    const errorMessages = [];
+    
+    document.querySelectorAll('.detail-row').forEach((row, index) => {
+        const debeInput = row.querySelector('.debe-input');
+        const haberInput = row.querySelector('.haber-input');
+        const cuentaInput = row.querySelector('.cuenta-id-input');
+        
+        const debe = parseFloat(debeInput.value) || 0;
+        const haber = parseFloat(haberInput.value) || 0;
+        const cuentaId = cuentaInput.value;
+        
+        console.log(`Fila ${index + 1}:`, {
+            cuentaId: cuentaId,
+            debe: debe,
+            haber: haber
+        });
+        
+        // Validar que se haya seleccionado una cuenta
+        if (!cuentaId) {
+            isValid = false;
+            errorMessages.push(`Fila ${index + 1}: Debe seleccionar una cuenta`);
+            cuentaInput.closest('.relative').classList.add('border-red-500');
+        } else {
+            cuentaInput.closest('.relative').classList.remove('border-red-500');
+        }
+        
+        // Validar que Debe o Haber sea mayor a 0
+        if (debe <= 0 && haber <= 0) {
+            isValid = false;
+            errorMessages.push(`Fila ${index + 1}: Debe o Haber debe ser mayor a 0`);
+            debeInput.classList.add('border-red-500');
+            haberInput.classList.add('border-red-500');
+        } else {
+            debeInput.classList.remove('border-red-500');
+            haberInput.classList.remove('border-red-500');
+        }
+        
+        // Asegurar que los valores vacíos se conviertan a 0
+        if (debeInput.value === '' || debeInput.value === null) {
+            debeInput.value = '0';
+        }
+        if (haberInput.value === '' || haberInput.value === null) {
+            haberInput.value = '0';
+        }
+    });
+    
+    if (!isValid) {
+        e.preventDefault();
+        console.log('Errores de validación:', errorMessages);
+        alert('Por favor corrija los siguientes errores:\n\n' + errorMessages.join('\n'));
+    } else {
+        console.log('=== FORM VALIDADO, ENVIANDO... ===');
+    }
+});
 </script>
 @endpush
 @endsection

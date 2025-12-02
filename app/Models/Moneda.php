@@ -35,7 +35,7 @@ class Moneda extends Model
 
     public function tiposCambio()
     {
-        return $this->hasMany(TipoCambio::class, 'id_moneda');
+        return $this->hasMany(TipoCambio::class, 'id_moneda', 'id_moneda');
     }
 }
 

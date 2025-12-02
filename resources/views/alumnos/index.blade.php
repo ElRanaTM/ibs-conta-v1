@@ -53,7 +53,7 @@
                 @forelse($alumnos as $alumno)
                 <tr>
                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ $alumno->codigo }}</td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $alumno->nombre_completo }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $alumno->apellido_paterno }} {{ $alumno->apellido_materno }} {{ $alumno->nombres }}</td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $alumno->ci ?? 'N/A' }}</td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $alumno->celular ?? 'N/A' }}</td>
                     <td class="px-6 py-4 whitespace-nowrap text-center">

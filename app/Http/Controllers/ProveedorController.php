@@ -10,7 +10,12 @@ class ProveedorController extends Controller
     public function index()
     {
         $proveedores = Proveedor::all();
-        return response()->json($proveedores);
+        return view('catalogos.proveedores.index', compact('proveedores'));
+    }
+
+    public function create()
+    {
+        return view('catalogos.proveedores.create');
     }
 
     public function store(Request $request)
@@ -22,14 +27,20 @@ class ProveedorController extends Controller
             'direccion' => 'nullable|string',
         ]);
 
-        $proveedor = Proveedor::create($request->all());
-        return response()->json($proveedor, 201);
+        Proveedor::create($request->all());
+        return redirect()->route('catalogos.proveedores.index')->with('success', 'Proveedor creado exitosamente.');
     }
 
     public function show($id)
     {
         $proveedor = Proveedor::findOrFail($id);
         return response()->json($proveedor);
+    }
+
+    public function edit($id)
+    {
+        $proveedor = Proveedor::findOrFail($id);
+        return view('catalogos.proveedores.edit', compact('proveedor'));
     }
 
     public function update(Request $request, $id)
@@ -44,14 +55,13 @@ class ProveedorController extends Controller
         ]);
 
         $proveedor->update($request->all());
-        return response()->json($proveedor);
+        return redirect()->route('catalogos.proveedores.index')->with('success', 'Proveedor actualizado exitosamente.');
     }
 
     public function destroy($id)
     {
         $proveedor = Proveedor::findOrFail($id);
         $proveedor->delete();
-        return response()->json(null, 204);
+        return redirect()->route('catalogos.proveedores.index')->with('success', 'Proveedor eliminado exitosamente.');
     }
 }
-

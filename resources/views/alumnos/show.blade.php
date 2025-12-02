@@ -7,7 +7,7 @@
 @section('page-header')
 <div class="flex items-center justify-between">
     <div>
-        <h1 class="text-2xl font-bold text-gray-900">{{ $alumno->nombre_completo }}</h1>
+        <h1 class="text-2xl font-bold text-gray-900">{{ $alumno->apellido_paterno }} {{ $alumno->apellido_materno }} {{ $alumno->nombres }}</h1>
         <p class="text-gray-600 mt-1">Información del alumno</p>
     </div>
     <div class="flex space-x-3">
@@ -101,9 +101,12 @@
             <div class="space-y-3">
                 @forelse($alumno->apoderados as $apoderado)
                 <div class="p-3 border border-gray-200 rounded-lg">
-                    <p class="text-sm font-medium text-gray-900">{{ $apoderado->nombre_completo }}</p>
+                    <p class="text-sm font-medium text-gray-900">{{ $apoderado->apellido_paterno }} {{ $apoderado->apellido_materno }} {{ $apoderado->nombres }}</p>
                     <p class="text-xs text-gray-500 mt-1">CI: {{ $apoderado->ci }}</p>
                     <p class="text-xs text-gray-500">{{ $apoderado->relacion_legal }}</p>
+                    <a href="{{ route('apoderados.show', $apoderado->id_apoderado) }}" class="text-xs text-gray-600 hover:text-gray-900 mt-2 inline-block">
+                        Ver detalles <i class="fas fa-arrow-right ml-1"></i>
+                    </a>
                 </div>
                 @empty
                 <p class="text-sm text-gray-500">No tiene apoderados asignados</p>

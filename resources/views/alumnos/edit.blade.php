@@ -21,14 +21,20 @@
         
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-                <label for="codigo" class="block text-sm font-medium text-gray-700 mb-2">Código *</label>
-                <input type="text" name="codigo" id="codigo" value="{{ old('codigo', $alumno->codigo) }}" required
+                <label for="nombres" class="block text-sm font-medium text-gray-700 mb-2">Nombres *</label>
+                <input type="text" name="nombres" id="nombres" value="{{ old('nombres', $alumno->nombres) }}" required
                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent">
             </div>
-            
+
             <div>
-                <label for="nombre_completo" class="block text-sm font-medium text-gray-700 mb-2">Nombre Completo *</label>
-                <input type="text" name="nombre_completo" id="nombre_completo" value="{{ old('nombre_completo', $alumno->nombre_completo) }}" required
+                <label for="apellido_paterno" class="block text-sm font-medium text-gray-700 mb-2">Apellido Paterno</label>
+                <input type="text" name="apellido_paterno" id="apellido_paterno" value="{{ old('apellido_paterno', $alumno->apellido_paterno) }}"
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent">
+            </div>
+
+            <div>
+                <label for="apellido_materno" class="block text-sm font-medium text-gray-700 mb-2">Apellido Materno</label>
+                <input type="text" name="apellido_materno" id="apellido_materno" value="{{ old('apellido_materno', $alumno->apellido_materno) }}"
                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent">
             </div>
             
@@ -69,14 +75,16 @@
     
     <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
         <h3 class="text-lg font-semibold text-gray-900 mb-4">Apoderados</h3>
-        <div class="space-y-2 max-h-64 overflow-y-auto">
+        <div class="mb-3">
+            <input type="text" id="search-apoderado" placeholder="Buscar por CI, nombres, apellidos o dirección..." class="w-full px-4 py-2 border rounded-lg">
+        </div>
+        <div class="space-y-2 max-h-64 overflow-y-auto" id="apoderados-list">
             @forelse($apoderados as $apoderado)
-            <label class="flex items-center p-3 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer">
-                <input type="checkbox" name="apoderados[]" value="{{ $apoderado->id_apoderado }}"
-                    {{ $alumno->apoderados->contains($apoderado->id_apoderado) ? 'checked' : '' }}
-                    class="rounded border-gray-300 text-gray-600 focus:ring-gray-500">
+            <?php $fullName = trim(($apoderado->nombres ?? $apoderado->nombre_completo ?? '') . ' ' . ($apoderado->apellido_paterno ?? '') . ' ' . ($apoderado->apellido_materno ?? '')); ?>
+            <label class="flex items-center p-3 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer apoderado-row" data-ci="{{ $apoderado->ci ?? '' }}" data-nombres="{{ $apoderado->nombres ?? $apoderado->nombre_completo }}" data-apellidos="{{ ($apoderado->apellido_paterno ?? '') . ' ' . ($apoderado->apellido_materno ?? '') }}" data-direccion="{{ $apoderado->direccion ?? '' }}">
+                <input type="checkbox" name="apoderados[]" value="{{ $apoderado->id_apoderado }}" {{ $alumno->apoderados->contains($apoderado->id_apoderado) ? 'checked' : '' }} class="rounded border-gray-300 text-gray-600 focus:ring-gray-500">
                 <div class="ml-3">
-                    <p class="text-sm font-medium text-gray-900">{{ $apoderado->nombre_completo }}</p>
+                    <p class="text-sm font-medium text-gray-900">{{ $fullName }}</p>
                     <p class="text-xs text-gray-500">CI: {{ $apoderado->ci }} - {{ $apoderado->relacion_legal }}</p>
                 </div>
             </label>
@@ -85,6 +93,18 @@
             @endforelse
         </div>
     </div>
+
+@push('scripts')
+<script>
+document.getElementById('search-apoderado').addEventListener('input', function(e){
+    const q = e.target.value.toLowerCase();
+    document.querySelectorAll('.apoderado-row').forEach(row => {
+        const text = (row.dataset.ci + ' ' + row.dataset.nombres + ' ' + row.dataset.apellidos + ' ' + row.dataset.direccion).toLowerCase();
+        row.style.display = text.includes(q) ? '' : 'none';
+    });
+});
+</script>
+@endpush
     
     <div class="flex justify-end space-x-4">
         <a href="{{ route('alumnos.index') }}" class="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors">

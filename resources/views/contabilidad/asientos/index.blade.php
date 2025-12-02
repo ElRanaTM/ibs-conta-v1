@@ -10,7 +10,7 @@
         <h1 class="text-2xl font-bold text-gray-900">Asientos Contables</h1>
         <p class="text-gray-600 mt-1">Gestiona los asientos contables del sistema</p>
     </div>
-    <a href="{{ route('asientos.create') }}" class="bg-gray-900 text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition-colors flex items-center">
+    <a href="{{ route('contabilidad.asientos.create') }}" class="bg-gray-900 text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition-colors flex items-center">
         <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
         </svg>
@@ -40,19 +40,22 @@
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $asiento->fecha->format('d/m/Y') }}</td>
                     <td class="px-6 py-4 text-sm text-gray-500">{{ Str::limit($asiento->glosa, 50) }}</td>
                     <td class="px-6 py-4 whitespace-nowrap">
-                        <span class="px-2 py-1 text-xs rounded-full {{ $asiento->estado ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800' }}">
-                            {{ $asiento->estado ? 'Activo' : 'Inactivo' }}
-                        </span>
+                        <form action="{{ route('contabilidad.asientos.toggle', $asiento->id) }}" method="POST">
+                            @csrf
+                            <button type="submit" class="px-2 py-1 text-xs rounded-full focus:outline-none {{ $asiento->estado ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800' }}">
+                                {{ $asiento->estado ? 'Activo' : 'Inactivo' }}
+                            </button>
+                        </form>
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $asiento->usuario->name ?? 'N/A' }}</td>
                     <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                        <a href="{{ route('asientos.show', $asiento->id) }}" class="text-gray-600 hover:text-gray-900 mr-4">
+                        <a href="{{ route('contabilidad.asientos.show', $asiento->id) }}" class="text-gray-600 hover:text-gray-900 mr-4">
                             <i class="fas fa-eye"></i>
                         </a>
-                        <a href="{{ route('asientos.edit', $asiento->id) }}" class="text-gray-600 hover:text-gray-900 mr-4">
+                        <a href="{{ route('contabilidad.asientos.edit', $asiento->id) }}" class="text-gray-600 hover:text-gray-900 mr-4">
                             <i class="fas fa-edit"></i>
                         </a>
-                        <form action="{{ route('asientos.destroy', $asiento->id) }}" method="POST" class="inline">
+                        <form action="{{ route('contabilidad.asientos.destroy', $asiento->id) }}" method="POST" class="inline">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="text-red-600 hover:text-red-900" onclick="return confirm('¿Estás seguro de eliminar este asiento?')">

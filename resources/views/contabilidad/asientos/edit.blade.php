@@ -12,7 +12,7 @@
 @endsection
 
 @section('content')
-<form action="{{ route('asientos.update', $asiento->id) }}" method="POST" class="space-y-6">
+<form action="{{ route('contabilidad.asientos.update', $asiento->id) }}" method="POST" class="space-y-6">
     @csrf
     @method('PUT')
     
@@ -95,7 +95,7 @@
     </div>
     
     <div class="flex justify-end space-x-4">
-        <a href="{{ route('asientos.index') }}" class="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors">
+        <a href="{{ route('contabilidad.asientos.index') }}" class="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors">
             Cancelar
         </a>
         <button type="submit" class="px-6 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors">

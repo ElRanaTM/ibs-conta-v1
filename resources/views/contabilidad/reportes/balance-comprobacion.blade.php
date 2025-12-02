@@ -11,27 +11,23 @@
         <p class="text-gray-600 mt-1">Resumen de saldos de todas las cuentas</p>
     </div>
     <div class="flex space-x-3">
-        <button class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors">
-            Exportar PDF
-        </button>
-        <button class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors">
-            Exportar Excel
-        </button>
+        <a href="{{ route('reportes.balance-comprobacion', ['fecha_desde' => request()->get('fecha_desde', date('Y-m-01')), 'fecha_hasta' => request()->get('fecha_hasta', date('Y-m-d'))]) }}" class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors">Exportar PDF</a>
+        <a href="{{ route('reportes.balance-comprobacion', ['fecha_desde' => request()->get('fecha_desde', date('Y-m-01')), 'fecha_hasta' => request()->get('fecha_hasta', date('Y-m-d'))]) }}" class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors">Exportar Excel</a>
     </div>
 </div>
 @endsection
 
 @section('content')
 <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
-    <form class="flex flex-col md:flex-row md:items-end space-y-4 md:space-y-0 md:space-x-4">
+    <form method="GET" class="flex flex-col md:flex-row md:items-end space-y-4 md:space-y-0 md:space-x-4">
         <div class="flex-1">
             <label for="fecha_desde" class="block text-sm font-medium text-gray-700 mb-2">Desde</label>
-            <input type="date" id="fecha_desde" value="{{ date('Y-m-01') }}"
+            <input type="date" id="fecha_desde" name="fecha_desde" value="{{ request()->get('fecha_desde', date('Y-m-01')) }}"
                 class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500">
         </div>
         <div class="flex-1">
             <label for="fecha_hasta" class="block text-sm font-medium text-gray-700 mb-2">Hasta</label>
-            <input type="date" id="fecha_hasta" value="{{ date('Y-m-d') }}"
+            <input type="date" id="fecha_hasta" name="fecha_hasta" value="{{ request()->get('fecha_hasta', date('Y-m-d')) }}"
                 class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500">
         </div>
         <div>

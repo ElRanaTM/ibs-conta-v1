@@ -45,7 +45,7 @@
             <tbody class="bg-white divide-y divide-gray-200">
                 @forelse($apoderados as $apoderado)
                 <tr>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ $apoderado->nombre_completo }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ $apoderado->apellido_paterno }} {{ $apoderado->apellido_materno }} {{ $apoderado->nombres }}</td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $apoderado->ci }}</td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $apoderado->relacion_legal }}</td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $apoderado->celular ?? 'N/A' }}</td>
