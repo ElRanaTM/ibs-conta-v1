@@ -9,8 +9,19 @@ class MonedaController extends Controller
 {
     public function index()
     {
-        $monedas = Moneda::all();
-        return response()->json($monedas);
+        $monedas = Moneda::latest()->paginate(15);
+        return view('catalogos.monedas.index', compact('monedas'));
+    }
+
+    public function create()
+    {
+        return view('catalogos.monedas.create');
+    }
+
+    public function edit($id)
+    {
+        $moneda = Moneda::findOrFail($id);
+        return view('catalogos.monedas.edit', compact('moneda'));
     }
 
     public function store(Request $request)
@@ -23,7 +34,7 @@ class MonedaController extends Controller
         ]);
 
         $moneda = Moneda::create($request->all());
-        return response()->json($moneda, 201);
+        return redirect()->route('catalogos.monedas.index')->with('success', 'Moneda creada exitosamente.');
     }
 
     public function show($id)
@@ -44,14 +55,13 @@ class MonedaController extends Controller
         ]);
 
         $moneda->update($request->all());
-        return response()->json($moneda);
+        return redirect()->route('catalogos.monedas.index')->with('success', 'Moneda actualizada exitosamente.');
     }
 
     public function destroy($id)
     {
         $moneda = Moneda::findOrFail($id);
         $moneda->delete();
-        return response()->json(null, 204);
+        return redirect()->route('catalogos.monedas.index')->with('success', 'Moneda eliminada exitosamente.');
     }
 }
-

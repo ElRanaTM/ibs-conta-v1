@@ -20,10 +20,10 @@
         <div class="bg-white dark:bg-[#161615] rounded-lg shadow-lg p-8 border border-[#e3e3e0] dark:border-[#3E3E3A]">
             <div class="mb-6 text-center">
                 <h1 class="text-2xl font-semibold text-[#1b1b18] dark:text-[#EDEDEC] mb-2">
-                    Iniciar Sesión
+                    -
                 </h1>
                 <p class="text-sm text-[#706f6c] dark:text-[#A1A09A]">
-                    Ingresa tus credenciales para acceder
+                    -
                 </p>
             </div>
 

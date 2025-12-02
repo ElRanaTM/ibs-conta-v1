@@ -11,8 +11,19 @@ class PagoController extends Controller
 {
     public function index()
     {
-        $pagos = Pago::with(['alumno', 'concepto', 'periodo', 'moneda', 'metodoPago', 'asiento'])->get();
-        return response()->json($pagos);
+        $pagos = Pago::with(['alumno', 'concepto', 'periodo', 'moneda', 'metodoPago'])->latest()->paginate(15);
+        return view('ingresos.pagos.index', compact('pagos'));
+    }
+
+    public function create()
+    {
+        return view('ingresos.pagos.create');
+    }
+
+    public function edit($id)
+    {
+        $pago = Pago::with(['alumno', 'concepto', 'periodo', 'moneda', 'metodoPago'])->findOrFail($id);
+        return view('ingresos.pagos.edit', compact('pago'));
     }
 
     public function store(Request $request)
@@ -55,13 +66,13 @@ class PagoController extends Controller
             'id_numeracion_documento' => $numeracion->id,
         ]);
 
-        return response()->json($pago->load(['alumno', 'concepto', 'periodo', 'moneda', 'metodoPago', 'asiento']), 201);
+        return redirect()->route('pagos.index')->with('success', 'Pago registrado exitosamente.');
     }
 
     public function show($id)
     {
         $pago = Pago::with(['alumno', 'concepto', 'periodo', 'moneda', 'metodoPago', 'asiento'])->findOrFail($id);
-        return response()->json($pago);
+        return view('ingresos.pagos.show', compact('pago'));
     }
 
     public function update(Request $request, $id)
@@ -82,14 +93,14 @@ class PagoController extends Controller
         ]);
 
         $pago->update($request->all());
-        return response()->json($pago->load(['alumno', 'concepto', 'periodo', 'moneda', 'metodoPago', 'asiento']));
+        return redirect()->route('pagos.index')->with('success', 'Pago actualizado exitosamente.');
     }
 
     public function destroy($id)
     {
         $pago = Pago::findOrFail($id);
         $pago->delete();
-        return response()->json(null, 204);
+        return redirect()->route('pagos.index')->with('success', 'Pago eliminado exitosamente.');
     }
 }
 

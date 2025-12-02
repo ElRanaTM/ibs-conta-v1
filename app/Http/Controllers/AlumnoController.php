@@ -9,8 +9,21 @@ class AlumnoController extends Controller
 {
     public function index()
     {
-        $alumnos = Alumno::with('apoderados')->get();
-        return response()->json($alumnos);
+        $alumnos = Alumno::with('apoderados')->latest()->paginate(15);
+        return view('alumnos.index', compact('alumnos'));
+    }
+
+    public function create()
+    {
+        $apoderados = \App\Models\Apoderado::all();
+        return view('alumnos.create', compact('apoderados'));
+    }
+
+    public function edit($id)
+    {
+        $alumno = Alumno::with('apoderados')->findOrFail($id);
+        $apoderados = \App\Models\Apoderado::all();
+        return view('alumnos.edit', compact('alumno', 'apoderados'));
     }
 
     public function store(Request $request)
@@ -31,13 +44,13 @@ class AlumnoController extends Controller
             $alumno->apoderados()->sync($request->apoderados);
         }
 
-        return response()->json($alumno->load('apoderados'), 201);
+        return redirect()->route('alumnos.index')->with('success', 'Alumno creado exitosamente.');
     }
 
     public function show($id)
     {
-        $alumno = Alumno::with('apoderados', 'pagos')->findOrFail($id);
-        return response()->json($alumno);
+        $alumno = Alumno::with('apoderados', 'pagos.concepto', 'pagos.periodo', 'pagos.moneda')->findOrFail($id);
+        return view('alumnos.show', compact('alumno'));
     }
 
     public function update(Request $request, $id)
@@ -60,14 +73,14 @@ class AlumnoController extends Controller
             $alumno->apoderados()->sync($request->apoderados);
         }
 
-        return response()->json($alumno->load('apoderados'));
+        return redirect()->route('alumnos.index')->with('success', 'Alumno actualizado exitosamente.');
     }
 
     public function destroy($id)
     {
         $alumno = Alumno::findOrFail($id);
         $alumno->delete();
-        return response()->json(null, 204);
+        return redirect()->route('alumnos.index')->with('success', 'Alumno eliminado exitosamente.');
     }
 }
 

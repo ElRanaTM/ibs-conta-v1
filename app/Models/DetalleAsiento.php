@@ -16,6 +16,7 @@ class DetalleAsiento extends Model
         'cuenta_analitica_id',
         'debe',
         'haber',
+        'glosa',
         'metodo_pago_id',
     ];
 

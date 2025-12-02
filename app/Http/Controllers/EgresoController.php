@@ -10,8 +10,19 @@ class EgresoController extends Controller
 {
     public function index()
     {
-        $egresos = Egreso::with(['proveedor', 'categoria', 'moneda', 'asiento'])->get();
-        return response()->json($egresos);
+        $egresos = Egreso::with(['proveedor', 'categoria', 'moneda'])->latest()->paginate(15);
+        return view('egresos.index', compact('egresos'));
+    }
+
+    public function create()
+    {
+        return view('egresos.create');
+    }
+
+    public function edit($id)
+    {
+        $egreso = Egreso::with(['proveedor', 'categoria', 'moneda'])->findOrFail($id);
+        return view('egresos.edit', compact('egreso'));
     }
 
     public function store(Request $request)
@@ -41,13 +52,13 @@ class EgresoController extends Controller
             'serie' => 'EGR',
         ]);
 
-        return response()->json($egreso->load(['proveedor', 'categoria', 'moneda', 'asiento']), 201);
+        return redirect()->route('egresos.index')->with('success', 'Egreso registrado exitosamente.');
     }
 
     public function show($id)
     {
         $egreso = Egreso::with(['proveedor', 'categoria', 'moneda', 'asiento'])->findOrFail($id);
-        return response()->json($egreso);
+        return view('egresos.show', compact('egreso'));
     }
 
     public function update(Request $request, $id)
@@ -65,14 +76,14 @@ class EgresoController extends Controller
         ]);
 
         $egreso->update($request->all());
-        return response()->json($egreso->load(['proveedor', 'categoria', 'moneda', 'asiento']));
+        return redirect()->route('egresos.index')->with('success', 'Egreso actualizado exitosamente.');
     }
 
     public function destroy($id)
     {
         $egreso = Egreso::findOrFail($id);
         $egreso->delete();
-        return response()->json(null, 204);
+        return redirect()->route('egresos.index')->with('success', 'Egreso eliminado exitosamente.');
     }
 }
 

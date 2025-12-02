@@ -12,6 +12,7 @@ return new class extends Migration {
             $table->foreignId('cuenta_analitica_id')->constrained('cuentas_analiticas');
             $table->decimal('debe', 12, 2)->default(0);
             $table->decimal('haber', 12, 2)->default(0);
+            $table->text('glosa')->nullable();
             $table->foreignId('metodo_pago_id')->nullable()->constrained('metodo_pago');
             $table->index(['asiento_id']);
             $table->index(['cuenta_analitica_id']);
