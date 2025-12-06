@@ -45,32 +45,53 @@
     <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
         <div class="flex items-center justify-between mb-4">
             <h3 class="text-lg font-semibold text-gray-900">Detalles del Asiento</h3>
-            <button type="button" id="add-detail" class="text-sm text-gray-600 hover:text-gray-900 flex items-center">
-                <i class="fas fa-plus mr-1"></i>Agregar Línea
+            <button type="button" id="add-detail" class="text-sm bg-gray-900 text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition-colors flex items-center">
+                <i class="fas fa-plus mr-2"></i>Agregar Línea
             </button>
         </div>
         
         <div id="detalles-container" class="space-y-4">
             @foreach($asiento->detalleAsientos as $index => $detalle)
-            <div class="grid grid-cols-12 gap-4 detail-row">
-                <div class="col-span-5">
-                    <select name="detalle_asientos[{{ $index }}][cuenta_analitica_id]" required
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500">
-                        <option value="">Seleccionar Cuenta</option>
-                        <option value="{{ $detalle->cuenta_analitica_id }}" selected>{{ $detalle->cuentaAnalitica->codigo ?? 'N/A' }} - {{ $detalle->cuentaAnalitica->nombre ?? 'N/A' }}</option>
-                    </select>
+            <div class="grid grid-cols-12 gap-4 detail-row border border-gray-200 p-4 rounded-lg">
+                <div class="col-span-12">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Buscar Cuenta</label>
+                    <div class="relative">
+                        <input type="text" 
+                            id="cuenta-search-{{ $index }}" 
+                            class="cuenta-search w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent"
+                            placeholder="Buscar por código o nombre..."
+                            value="{{ $detalle->cuentaAnalitica ? $detalle->cuentaAnalitica->codigo . ' - ' . $detalle->cuentaAnalitica->nombre : '' }}"
+                            autocomplete="off">
+                        <input type="hidden" name="detalle_asientos[{{ $index }}][cuenta_analitica_id]" class="cuenta-id-input" 
+                            value="{{ $detalle->cuenta_analitica_id }}" required>
+                        <div id="cuenta-results-{{ $index }}" class="hidden absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-60 overflow-y-auto">
+                        </div>
+                    </div>
                 </div>
-                <div class="col-span-3">
-                    <input type="number" step="0.01" name="detalle_asientos[{{ $index }}][debe]" value="{{ $detalle->debe }}" placeholder="0.00"
+                <div class="col-span-12">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Glosa</label>
+                    <input type="text" name="detalle_asientos[{{ $index }}][glosa]" 
+                        value="{{ old('detalle_asientos.' . $index . '.glosa', $detalle->glosa) }}"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500"
+                        placeholder="Glosa del detalle">
+                </div>
+                <div class="col-span-5">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Debe</label>
+                    <input type="number" step="0.01" name="detalle_asientos[{{ $index }}][debe]" 
+                        value="{{ old('detalle_asientos.' . $index . '.debe', $detalle->debe) }}" 
+                        placeholder="0.00"
                         class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 debe-input">
                 </div>
-                <div class="col-span-3">
-                    <input type="number" step="0.01" name="detalle_asientos[{{ $index }}][haber]" value="{{ $detalle->haber }}" placeholder="0.00"
+                <div class="col-span-5">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Haber</label>
+                    <input type="number" step="0.01" name="detalle_asientos[{{ $index }}][haber]" 
+                        value="{{ old('detalle_asientos.' . $index . '.haber', $detalle->haber) }}" 
+                        placeholder="0.00"
                         class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 haber-input">
                 </div>
-                <div class="col-span-1">
-                    <button type="button" class="remove-row text-red-600 hover:text-red-800">
-                        <i class="fas fa-times"></i>
+                <div class="col-span-2 flex items-end">
+                    <button type="button" class="remove-row w-full text-red-600 hover:text-red-800 py-2">
+                        <i class="fas fa-trash"></i>
                     </button>
                 </div>
             </div>
@@ -89,7 +110,7 @@
                 </div>
             </div>
             <div class="mt-2 text-right">
-                <span class="text-sm" id="balance-status"></span>
+                <span class="text-sm text-gray-500" id="balance-status"></span>
             </div>
         </div>
     </div>
@@ -106,35 +127,111 @@
 
 @push('scripts')
 <script>
-let detailCount = {{ $asiento->detalleAsientos->count() }};
+let detailCount = {{ $asiento->detalleAsientos->count() - 1 }};
+let cuentasData = @json($cuentas->toArray());
+
 const addDetailRow = () => {
     detailCount++;
     const html = `
-        <div class="grid grid-cols-12 gap-4 detail-row">
-            <div class="col-span-5">
-                <select name="detalle_asientos[${detailCount}][cuenta_analitica_id]" required
-                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500">
-                    <option value="">Seleccionar Cuenta</option>
-                </select>
+        <div class="grid grid-cols-12 gap-4 detail-row border border-gray-200 p-4 rounded-lg">
+            <div class="col-span-12">
+                <label class="block text-sm font-medium text-gray-700 mb-2">Buscar Cuenta</label>
+                <div class="relative">
+                    <input type="text" 
+                        id="cuenta-search-${detailCount}" 
+                        class="cuenta-search w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent"
+                        placeholder="Buscar por código o nombre..."
+                        autocomplete="off">
+                    <input type="hidden" name="detalle_asientos[${detailCount}][cuenta_analitica_id]" class="cuenta-id-input" required>
+                    <div id="cuenta-results-${detailCount}" class="hidden absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-60 overflow-y-auto">
+                    </div>
+                </div>
             </div>
-            <div class="col-span-3">
+            <div class="col-span-12">
+                <label class="block text-sm font-medium text-gray-700 mb-2">Glosa</label>
+                <input type="text" name="detalle_asientos[${detailCount}][glosa]" 
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500"
+                    placeholder="Glosa del detalle">
+            </div>
+            <div class="col-span-5">
+                <label class="block text-sm font-medium text-gray-700 mb-2">Debe</label>
                 <input type="number" step="0.01" name="detalle_asientos[${detailCount}][debe]" placeholder="0.00" value="0.00"
                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 debe-input">
             </div>
-            <div class="col-span-3">
+            <div class="col-span-5">
+                <label class="block text-sm font-medium text-gray-700 mb-2">Haber</label>
                 <input type="number" step="0.01" name="detalle_asientos[${detailCount}][haber]" placeholder="0.00" value="0.00"
                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 haber-input">
             </div>
-            <div class="col-span-1">
-                <button type="button" class="remove-row text-red-600 hover:text-red-800">
-                    <i class="fas fa-times"></i>
+            <div class="col-span-2 flex items-end">
+                <button type="button" class="remove-row w-full text-red-600 hover:text-red-800 py-2">
+                    <i class="fas fa-trash"></i>
                 </button>
             </div>
         </div>
     `;
     document.getElementById('detalles-container').insertAdjacentHTML('beforeend', html);
+    setupCuentaSearch(detailCount);
     updateTotals();
 };
+
+const setupCuentaSearch = (rowId) => {
+    const searchInput = document.getElementById(`cuenta-search-${rowId}`);
+    const resultsDiv = document.getElementById(`cuenta-results-${rowId}`);
+    const hiddenInput = searchInput.parentElement.querySelector('.cuenta-id-input');
+    
+    searchInput.addEventListener('input', (e) => {
+        const query = e.target.value.toLowerCase();
+        if (query.length < 2) {
+            resultsDiv.classList.add('hidden');
+            return;
+        }
+        
+        const filtered = cuentasData.filter(cuenta => 
+            cuenta.codigo.toLowerCase().includes(query) || 
+            cuenta.nombre.toLowerCase().includes(query)
+        );
+        
+        if (filtered.length > 0) {
+            resultsDiv.innerHTML = filtered.map(cuenta => `
+                <div class="px-4 py-2 hover:bg-gray-100 cursor-pointer cuenta-option" 
+                     data-id="${cuenta.id}" 
+                     data-codigo="${cuenta.codigo}" 
+                     data-nombre="${cuenta.nombre}">
+                    <div class="font-medium text-gray-900">${cuenta.codigo}</div>
+                    <div class="text-sm text-gray-500">${cuenta.nombre}</div>
+                </div>
+            `).join('');
+            resultsDiv.classList.remove('hidden');
+        } else {
+            resultsDiv.innerHTML = '<div class="px-4 py-2 text-gray-500">No se encontraron cuentas</div>';
+            resultsDiv.classList.remove('hidden');
+        }
+    });
+    
+    resultsDiv.addEventListener('click', (e) => {
+        const option = e.target.closest('.cuenta-option');
+        if (option) {
+            const id = option.dataset.id;
+            const codigo = option.dataset.codigo;
+            const nombre = option.dataset.nombre;
+            searchInput.value = `${codigo} - ${nombre}`;
+            hiddenInput.value = id;
+            resultsDiv.classList.add('hidden');
+        }
+    });
+    
+    document.addEventListener('click', (e) => {
+        if (!searchInput.contains(e.target) && !resultsDiv.contains(e.target)) {
+            resultsDiv.classList.add('hidden');
+        }
+    });
+};
+
+// Inicializar búsqueda para filas existentes
+document.querySelectorAll('.cuenta-search').forEach((input, index) => {
+    setupCuentaSearch(index);
+});
 
 document.getElementById('add-detail').addEventListener('click', addDetailRow);
 
@@ -177,8 +274,53 @@ document.addEventListener('input', (e) => {
     }
 });
 
+// Validación del formulario
+document.querySelector('form').addEventListener('submit', function(e) {
+    let isValid = true;
+    const errorMessages = [];
+    
+    document.querySelectorAll('.detail-row').forEach((row, index) => {
+        const debeInput = row.querySelector('.debe-input');
+        const haberInput = row.querySelector('.haber-input');
+        const cuentaInput = row.querySelector('.cuenta-id-input');
+        
+        const debe = parseFloat(debeInput.value) || 0;
+        const haber = parseFloat(haberInput.value) || 0;
+        const cuentaId = cuentaInput.value;
+        
+        if (!cuentaId) {
+            isValid = false;
+            errorMessages.push(`Fila ${index + 1}: Debe seleccionar una cuenta`);
+            cuentaInput.closest('.relative').classList.add('border-red-500');
+        } else {
+            cuentaInput.closest('.relative').classList.remove('border-red-500');
+        }
+        
+        if (debe <= 0 && haber <= 0) {
+            isValid = false;
+            errorMessages.push(`Fila ${index + 1}: Debe o Haber debe ser mayor a 0`);
+            debeInput.classList.add('border-red-500');
+            haberInput.classList.add('border-red-500');
+        } else {
+            debeInput.classList.remove('border-red-500');
+            haberInput.classList.remove('border-red-500');
+        }
+        
+        if (debeInput.value === '' || debeInput.value === null) {
+            debeInput.value = '0';
+        }
+        if (haberInput.value === '' || haberInput.value === null) {
+            haberInput.value = '0';
+        }
+    });
+    
+    if (!isValid) {
+        e.preventDefault();
+        alert('Por favor corrija los siguientes errores:\n\n' + errorMessages.join('\n'));
+    }
+});
+
 updateTotals();
 </script>
 @endpush
 @endsection
-

@@ -105,7 +105,13 @@ class AsientoController extends Controller
     public function edit($id)
     {
         $asiento = Asiento::with(['usuario', 'detalleAsientos.cuentaAnalitica'])->findOrFail($id);
-        return view('contabilidad.asientos.edit', compact('asiento'));
+        
+        // Obtener todas las cuentas analíticas para el dropdown
+        $cuentas = \App\Models\CuentaAnalitica::select('id', 'codigo', 'nombre')
+            ->orderBy('codigo')
+            ->get();
+        
+        return view('contabilidad.asientos.edit', compact('asiento', 'cuentas'));
     }
 
     public function store(Request $request)
