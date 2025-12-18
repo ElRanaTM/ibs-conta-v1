@@ -20,6 +20,49 @@
 @endsection
 
 @section('content')
+<div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
+    <form method="GET" action="{{ route('contabilidad.asientos.index') }}" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
+        <div>
+            <label for="numero" class="block text-sm font-medium text-gray-700 mb-2">Número</label>
+            <input type="text" id="numero" name="numero" value="{{ request()->get('numero') }}"
+                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500"
+                placeholder="Buscar por número">
+        </div>
+        <div>
+            <label for="fecha_desde" class="block text-sm font-medium text-gray-700 mb-2">Desde</label>
+            <input type="date" id="fecha_desde" name="fecha_desde" value="{{ request()->get('fecha_desde') }}"
+                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500">
+        </div>
+        <div>
+            <label for="fecha_hasta" class="block text-sm font-medium text-gray-700 mb-2">Hasta</label>
+            <input type="date" id="fecha_hasta" name="fecha_hasta" value="{{ request()->get('fecha_hasta') }}"
+                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500">
+        </div>
+        <div>
+            <label for="glosa" class="block text-sm font-medium text-gray-700 mb-2">Glosa</label>
+            <input type="text" id="glosa" name="glosa" value="{{ request()->get('glosa') }}"
+                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500"
+                placeholder="Buscar en glosa">
+        </div>
+        <div>
+            <label for="estado" class="block text-sm font-medium text-gray-700 mb-2">Estado</label>
+            <select id="estado" name="estado" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500">
+                <option value="">Todos</option>
+                <option value="1" {{ request()->get('estado') == '1' ? 'selected' : '' }}>Activo</option>
+                <option value="0" {{ request()->get('estado') == '0' ? 'selected' : '' }}>Inactivo</option>
+            </select>
+        </div>
+        <div class="md:col-span-2 lg:col-span-3 xl:col-span-5 flex space-x-2">
+            <button type="submit" class="px-6 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors">
+                <i class="fas fa-search mr-2"></i>Buscar
+            </button>
+            <a href="{{ route('contabilidad.asientos.index') }}" class="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors">
+                <i class="fas fa-times mr-2"></i>Limpiar
+            </a>
+        </div>
+    </form>
+</div>
+
 <div class="bg-white rounded-lg shadow-sm border border-gray-200">
     <div class="overflow-x-auto">
         <table class="min-w-full divide-y divide-gray-200">

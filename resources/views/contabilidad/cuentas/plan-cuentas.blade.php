@@ -17,12 +17,14 @@
         <a href="{{ route('cuentas.plan-cuentas.manage') }}" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors">
             <i class="fas fa-exclamation-triangle mr-2"></i>Gestión (Editar/Borrar)
         </a>
+        <!--
         <a href="{{ route('cuentas.plan-cuentas') }}" class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors">
             <i class="fas fa-file-pdf mr-2"></i>Exportar PDF
         </a>
         <a href="{{ route('cuentas.plan-cuentas') }}" class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors">
             <i class="fas fa-file-excel mr-2"></i>Exportar Excel
         </a>
+        -->
     </div>
 </div>
 @endsection

@@ -11,8 +11,8 @@
         <p class="text-gray-600 mt-1">Resumen de saldos de todas las cuentas</p>
     </div>
     <div class="flex space-x-3">
-        <a href="{{ route('reportes.balance-comprobacion', ['fecha_desde' => request()->get('fecha_desde', date('Y-m-01')), 'fecha_hasta' => request()->get('fecha_hasta', date('Y-m-d'))]) }}" class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors">Exportar PDF</a>
-        <a href="{{ route('reportes.balance-comprobacion', ['fecha_desde' => request()->get('fecha_desde', date('Y-m-01')), 'fecha_hasta' => request()->get('fecha_hasta', date('Y-m-d'))]) }}" class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors">Exportar Excel</a>
+        <a href="{{ route('reportes.balance-comprobacion.pdf', ['fecha_desde' => request()->get('fecha_desde', date('Y-m-01')), 'fecha_hasta' => request()->get('fecha_hasta', date('Y-m-d'))]) }}" class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors">Exportar PDF</a>
+        <!-- <a href="{{ route('reportes.balance-comprobacion', ['fecha_desde' => request()->get('fecha_desde', date('Y-m-01')), 'fecha_hasta' => request()->get('fecha_hasta', date('Y-m-d'))]) }}" class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors">Exportar Excel</a> -->
     </div>
 </div>
 @endsection
@@ -50,6 +50,14 @@
                 </tr>
             </thead>
             <tbody class="bg-white divide-y divide-gray-200">
+                @forelse($cuentas as $cuenta)
+                <tr>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ $cuenta['codigo'] }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $cuenta['nombre'] }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 text-right">{{ number_format($cuenta['saldo_deudor'], 2) }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 text-right">{{ number_format($cuenta['saldo_acreedor'], 2) }}</td>
+                </tr>
+                @empty
                 <tr>
                     <td colspan="4" class="px-6 py-12 text-center text-gray-500">
                         <svg class="w-12 h-12 mx-auto mb-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -59,12 +67,13 @@
                         <p class="text-sm text-gray-400 mt-2">Selecciona un rango de fechas y genera el reporte</p>
                     </td>
                 </tr>
+                @endforelse
             </tbody>
             <tfoot class="bg-gray-50">
                 <tr>
                     <td colspan="2" class="px-6 py-3 text-right text-sm font-semibold text-gray-900">TOTALES:</td>
-                    <td class="px-6 py-3 text-right text-sm font-semibold text-gray-900">0.00</td>
-                    <td class="px-6 py-3 text-right text-sm font-semibold text-gray-900">0.00</td>
+                    <td class="px-6 py-3 text-right text-sm font-semibold text-gray-900">{{ isset($totalSaldoDeudor) ? number_format($totalSaldoDeudor, 2) : '0.00' }}</td>
+                    <td class="px-6 py-3 text-right text-sm font-semibold text-gray-900">{{ isset($totalSaldoAcreedor) ? number_format($totalSaldoAcreedor, 2) : '0.00' }}</td>
                 </tr>
             </tfoot>
         </table>

@@ -45,9 +45,15 @@
                 </a>
             </li>
             <li>
-                <a href="{{ route('reportes.balance-comprobacion') }}" class="flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors {{ request()->routeIs('reportes.*') ? 'bg-gray-800 text-white' : 'text-gray-300 hover:bg-gray-800 hover:text-white' }}">
+                <a href="{{ route('reportes.balance-comprobacion') }}" class="flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors {{ request()->routeIs('reportes.balance-comprobacion') ? 'bg-gray-800 text-white' : 'text-gray-300 hover:bg-gray-800 hover:text-white' }}">
                     <i class="fas fa-chart-bar w-5 mr-3"></i>
-                    Reportes
+                    Reportes Balance
+                </a>
+            </li>
+            <li>
+                <a href="{{ route('reportes.mayor-general') }}" class="flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors {{ request()->routeIs('reportes.mayor-general') ? 'bg-gray-800 text-white' : 'text-gray-300 hover:bg-gray-800 hover:text-white' }}">
+                    <i class="fas fa-chart-bar w-5 mr-3"></i>
+                    Mayor General
                 </a>
             </li>
             
@@ -141,6 +147,7 @@
             </li>
             
             <!-- Administración -->
+             <!--
             @if($currentUser && $currentUser->hasRole(['admin', 'administrador']))
             <li class="pt-4">
                 <p class="px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Administración</p>
@@ -154,6 +161,7 @@
             @endif
         </ul>
     </nav>
+    -->
     
     <!-- User Info -->
     <div class="p-4 border-t border-gray-800">

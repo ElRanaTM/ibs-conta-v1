@@ -19,7 +19,7 @@
         <div class="flex items-center justify-between">
             <div>
                 <p class="text-sm font-medium text-gray-600">Total Ingresos</p>
-                <p class="text-2xl font-bold text-gray-900 mt-2">Bs. 0.00</p>
+                <p class="text-2xl font-bold text-gray-900 mt-2">Bs. {{ number_format($totalIngresos, 2) }}</p>
                 <p class="text-xs text-gray-500 mt-1">Este mes</p>
             </div>
             <div class="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center">
@@ -35,7 +35,7 @@
         <div class="flex items-center justify-between">
             <div>
                 <p class="text-sm font-medium text-gray-600">Total Egresos</p>
-                <p class="text-2xl font-bold text-gray-900 mt-2">Bs. 0.00</p>
+                <p class="text-2xl font-bold text-gray-900 mt-2">Bs. {{ number_format($totalEgresos, 2) }}</p>
                 <p class="text-xs text-gray-500 mt-1">Este mes</p>
             </div>
             <div class="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center">
@@ -51,7 +51,7 @@
         <div class="flex items-center justify-between">
             <div>
                 <p class="text-sm font-medium text-gray-600">Saldo Actual</p>
-                <p class="text-2xl font-bold text-gray-900 mt-2">Bs. 0.00</p>
+                <p class="text-2xl font-bold text-gray-900 mt-2">Bs. {{ number_format($saldoActual, 2) }}</p>
                 <p class="text-xs text-gray-500 mt-1">Balance</p>
             </div>
             <div class="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center">
@@ -67,7 +67,7 @@
         <div class="flex items-center justify-between">
             <div>
                 <p class="text-sm font-medium text-gray-600">Asientos</p>
-                <p class="text-2xl font-bold text-gray-900 mt-2">0</p>
+                <p class="text-2xl font-bold text-gray-900 mt-2">{{ $asientosMes }}</p>
                 <p class="text-xs text-gray-500 mt-1">Este mes</p>
             </div>
             <div class="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center">
@@ -87,12 +87,26 @@
             <h3 class="text-lg font-semibold text-gray-900">Últimos Asientos</h3>
         </div>
         <div class="p-6">
+            @forelse($ultimosAsientos as $asiento)
+            <div class="flex items-center justify-between py-3 border-b border-gray-100 last:border-b-0">
+                <div>
+                    <p class="text-sm font-medium text-gray-900">{{ $asiento->numero_asiento }}</p>
+                    <p class="text-xs text-gray-500">{{ $asiento->fecha->format('d/m/Y') }} - {{ Str::limit($asiento->glosa, 30) }}</p>
+                </div>
+                <div class="text-right">
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $asiento->estado ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800' }}">
+                        {{ $asiento->estado ? 'Activo' : 'Inactivo' }}
+                    </span>
+                </div>
+            </div>
+            @empty
             <div class="text-center py-8 text-gray-500">
                 <svg class="w-12 h-12 mx-auto mb-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                 </svg>
                 <p>No hay asientos registrados</p>
             </div>
+            @endforelse
         </div>
     </div>
     

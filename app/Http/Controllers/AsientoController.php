@@ -9,9 +9,34 @@ use Illuminate\Support\Facades\Log;
 
 class AsientoController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $asientos = Asiento::with(['usuario', 'detalleAsientos'])->latest()->paginate(15);
+        $query = Asiento::with(['usuario', 'detalleAsientos']);
+
+        // Filtro por número
+        if ($request->filled('numero')) {
+            $query->where('numero_asiento', 'like', '%' . $request->numero . '%');
+        }
+
+        // Filtro por rango de fechas
+        if ($request->filled('fecha_desde')) {
+            $query->where('fecha', '>=', $request->fecha_desde);
+        }
+        if ($request->filled('fecha_hasta')) {
+            $query->where('fecha', '<=', $request->fecha_hasta);
+        }
+
+        // Filtro por glosa
+        if ($request->filled('glosa')) {
+            $query->where('glosa', 'like', '%' . $request->glosa . '%');
+        }
+
+        // Filtro por estado
+        if ($request->filled('estado')) {
+            $query->where('estado', $request->estado);
+        }
+
+        $asientos = $query->latest()->paginate(15)->withQueryString();
         return view('contabilidad.asientos.index', compact('asientos'));
     }
 

@@ -20,10 +20,8 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 // Rutas protegidas
-Route::middleware(['auth'])->group(function () {
-    Route::get('/dashboard', function () {
-        return view('dashboard.index');
-    })->name('dashboard');
+Route::middleware(['auth', 'contador'])->group(function () {
+    Route::get('/dashboard', [\App\Http\Controllers\DashboardController::class, 'index'])->name('dashboard');
     
     // Asientos Contables
     Route::prefix('contabilidad/asientos')->name('contabilidad.asientos.')->group(function () {
@@ -97,12 +95,11 @@ Route::middleware(['auth'])->group(function () {
     
     // Reportes
     Route::prefix('contabilidad/reportes')->name('reportes.')->group(function () {
-        Route::get('/balance-comprobacion', function () {
-            return view('contabilidad.reportes.balance-comprobacion');
-        })->name('balance-comprobacion');
-        Route::get('/mayor-general', function () {
-            return view('contabilidad.reportes.mayor-general');
-        })->name('mayor-general');
+        Route::get('/balance-comprobacion', [\App\Http\Controllers\ReportesController::class, 'balanceComprobacion'])->name('balance-comprobacion');
+        Route::get('/balance-comprobacion/pdf', [\App\Http\Controllers\ReportesController::class, 'balanceComprobacionPdf'])->name('balance-comprobacion.pdf');
+        Route::get('/mayor-general', [\App\Http\Controllers\ReportesController::class, 'mayorGeneral'])->name('mayor-general');
+        Route::get('/mayor-general/pdf', [\App\Http\Controllers\ReportesController::class, 'mayorGeneralPdf'])->name('mayor-general.pdf');
+        Route::get('/libro-diario/pdf', [\App\Http\Controllers\ReportesController::class, 'libroDiarioPdf'])->name('libro-diario.pdf');
     });
     
     // Catálogos

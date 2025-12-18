@@ -11,7 +11,7 @@
         <p class="text-gray-600 mt-1">Registro cronológico de todos los asientos contables</p>
     </div>
     <div class="flex space-x-3">
-        <a href="{{ route('contabilidad.asientos.diario.export.print', ['fecha_desde' => $fechaDesde ?? date('Y-m-01'), 'fecha_hasta' => $fechaHasta ?? date('Y-m-d')]) }}" class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors">
+        <a href="{{ route('reportes.libro-diario.pdf', ['fecha_desde' => $fechaDesde ?? date('Y-m-01'), 'fecha_hasta' => $fechaHasta ?? date('Y-m-d')]) }}" class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors">
             <i class="fas fa-file-pdf mr-2"></i>Exportar PDF
         </a>
         <a href="{{ route('contabilidad.asientos.diario.export.csv', ['fecha_desde' => $fechaDesde ?? date('Y-m-01'), 'fecha_hasta' => $fechaHasta ?? date('Y-m-d')]) }}" class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors">

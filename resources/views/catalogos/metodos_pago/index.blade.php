@@ -33,10 +33,10 @@
                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ $metodo->nombre }}</td>
                     <td class="px-6 py-4 text-sm text-gray-500">{{ $metodo->descripcion }}</td>
                     <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                        <a href="{{ route('catalogos.metodos-pago.edit', $metodo->id_metodo) }}" class="text-gray-600 hover:text-gray-900 mr-4">
+                        <a href="{{ route('catalogos.metodos-pago.edit', $metodo->id) }}" class="text-gray-600 hover:text-gray-900 mr-4">
                             <i class="fas fa-edit"></i>
                         </a>
-                        <form action="{{ route('catalogos.metodos-pago.destroy', $metodo->id_metodo) }}" method="POST" class="inline">
+                        <form action="{{ route('catalogos.metodos-pago.destroy', $metodo->id) }}" method="POST" class="inline">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="text-red-600 hover:text-red-900" onclick="return confirm('¿Estás seguro?')">

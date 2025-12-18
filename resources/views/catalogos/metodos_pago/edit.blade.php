@@ -18,7 +18,7 @@
 
 @section('content')
 <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-    <form action="{{ route('catalogos.metodos-pago.update', $metodo->id_metodo) }}" method="POST" class="space-y-6">
+    <form action="{{ route('catalogos.metodos-pago.update', $metodo->id) }}" method="POST" class="space-y-6">
         @csrf
         @method('PUT')
         
